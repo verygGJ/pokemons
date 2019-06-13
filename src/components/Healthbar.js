@@ -7,6 +7,7 @@ import styled from 'styled-components';
 const HealthbarItem = styled.div`
   width: 280px;
 `
+
 const HealthbarHP = styled.div`
   text-align: center;
   font-size: 18px;
@@ -14,12 +15,12 @@ const HealthbarHP = styled.div`
 `
 
 type State = { 
-  percent: Number
+  percent: number
 }
 
 type Props = { 
-  healthbar: Number,
-  maxHP: Number
+  healthbar: number,
+  maxHP: number
 }
 
 class Healthbar extends React.Component<Props, State> {
@@ -34,15 +35,16 @@ class Healthbar extends React.Component<Props, State> {
     this.setState({ percent: finalResult });
   }
 
-  componentDidUpdate(previousProps, previousState) {
-    if (previousProps.healthbar !== this.props.healthbar) {
+  componentDidUpdate(previousProps: Props) : void {
+    const { healthbar } = this.props;
+    if (previousProps.healthbar !== healthbar) {
       this.updeteHealthbar();
     }
   }
 
   render() {
     const { percent } = this.state;
-    const {healthbar} = this.props
+    const { healthbar } = this.props
     return (
       <HealthbarItem>
         <HealthbarHP>

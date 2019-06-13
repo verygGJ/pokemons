@@ -5,10 +5,11 @@ import { connect } from "react-redux";
 import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
 import _ from 'lodash';
-import Card from './components/Card';
-import FightMessage from './components/FightMessage';
 import styled from 'styled-components'
 import { Button } from 'antd';
+import Card from './components/Card';
+import Preloader from './components/Preloader';
+import FightLog from './components/FightLog';
 import 'antd/dist/antd.css';
 
 
@@ -52,25 +53,26 @@ type Props = {
  };
 
 type State = { 
-  player: boolean,
-  enemy: boolean,
+  player: number,
+  enemy: number,
   playerHP: number,
   enemyHP: number,
+  allAttacks: Array<any>,
   winnerMessage: string,
+  fightStatus: boolean,
   gameOver: boolean,
-  fightStatus: boolean
  };
 
 class App extends React.Component<Props, State> {
   state = {
-    player: true,
+    player: 1,
+    enemy: 2,
     playerHP: 0,
-    enemy: true,
     enemyHP: 0,
-    winnerMessage: '',
-    gameOver: false,
     allAttacks: [],
+    winnerMessage: '',
     fightStatus: false,
+    gameOver: false,
   }
 
   updatePlayerHP = (hp) => {
@@ -83,7 +85,7 @@ class App extends React.Component<Props, State> {
 
   fightValidate = () => {
     const { playerPokemon, enemyPokemon } = this.props;
-    return playerPokemon.hasOwnProperty('id') && enemyPokemon.hasOwnProperty('id');
+    return _.isEmpty(playerPokemon, true) || _.isEmpty(enemyPokemon, true)
   }
 
   resistantAttackValidate = (randomeAttack, target) => {
@@ -194,8 +196,6 @@ class App extends React.Component<Props, State> {
     const { 
       player, 
       enemy, 
-      enemyAttacks, 
-      playerAttacks,
       winnerMessage,
       allAttacks,
       playerHP,
@@ -208,7 +208,7 @@ class App extends React.Component<Props, State> {
       <Query query={GET_POKEMONS}>
         {({ data: { pokemons }, loading }) => {
           if (loading || !pokemons) {
-            return <div>Loading ...</div>;
+            return <Preloader />;
           }
           return (
             <React.Fragment>
@@ -216,32 +216,29 @@ class App extends React.Component<Props, State> {
                 <Card 
                   data={pokemons} 
                   player={player} 
-                  updatePlayerHP={this.updatePlayerHP} 
                   healthbar={playerHP} 
+                  updatePokemonHP={this.updatePlayerHP} 
                   fightStatus={fightStatus}
                   />
                 <Button 
-                  disabled={!this.fightValidate() || fightStatus}
+                  disabled={this.fightValidate() || fightStatus}
                   onClick={this.startFight}
                 >
-                  { this.fightValidate() ? 'Fight' : 'Pick Pokemons' }
+                  { this.fightValidate() ? 'Pick Pokemons' : 'Fight'  }
                 </Button>
                 <Card 
                   data={pokemons} 
-                  enemy={enemy} 
-                  updateEnemyHP={this.updateEnemyHP} 
+                  player={enemy} 
                   healthbar={enemyHP} 
+                  updatePokemonHP={this.updateEnemyHP} 
                   fightStatus={fightStatus} 
                 />
               </Wrapper>
-
-              <FightMessage 
-                playerAttacks={playerAttacks} 
-                enemyAttacks={enemyAttacks} 
+              <FightLog 
                 allAttacks={allAttacks}
                 winnerMessage={winnerMessage}
               />
-              { gameOver ? <Button onClick={this.restartFight} >Restart Fight</Button> : '' }
+              { gameOver ? <Button className="restart-button" onClick={this.restartFight} >Restart Fight</Button> : '' }
             </React.Fragment>
           );
         }}

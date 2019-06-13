@@ -14,49 +14,74 @@ import {
 const CardWrapper = styled.div`
   max-width: 400px;
   width: 100%;
+  min-height: 380px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-start;
+  justify-content: flex-start;
+  align-items: center;
   border: 1px solid #ccc;
   padding: 30px 20px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
 `
+type Props = {
+  data: [],
+  player: number,
+  healthbar: number,
+  fightStatus: boolean,
+  updatePokemonHP: Function,
+  selectPlayerPokemon: Function,
+  selectEnemyPokemon: Function
+}
 
 type State = { 
   pokemons: [],
-  selected: object
+  selected: Object
  };
 
-class Card extends React.Component<State> {
+class Card extends React.Component<Props, State> {
   state = {
     pokemons: this.props.data,
     selected: {},
   }
 
-  handleChange = (value) => {
-    const { pokemons } = this.state;
+  updateSelectedPokemon = (pokemon, selectedHP) => {
     const { 
+      player,
       selectPlayerPokemon, 
       selectEnemyPokemon, 
-      updatePlayerHP,
-      updateEnemyHP,
-      player, 
-      enemy 
+      updatePokemonHP
     } = this.props;
-    const selected = pokemons.find(pokemon => pokemon.id === value);
-    if (player) {
-      this.setState({ selected }, () => selectPlayerPokemon(selected));  
-      updatePlayerHP(selected.maxHP) 
+
+    if (player === 1) {
+      selectPlayerPokemon(pokemon)
+      updatePokemonHP(selectedHP)
     }
-    if (enemy) {
-      this.setState({ selected }, () => selectEnemyPokemon(selected) );  
-      updateEnemyHP(selected.maxHP) 
+    if (player === 2) {
+      selectEnemyPokemon(pokemon)
+      updatePokemonHP(selectedHP)
+    }
+  }
+
+  handleChange = (value) => {
+    const { pokemons } = this.state;
+    const { player } = this.props;
+    
+    const selected = pokemons.find(pokemon => pokemon.id === value);
+
+    if (player === 1) {
+      this.setState({
+        selected
+      }, () => this.updateSelectedPokemon(selected, this.state.selected.maxHP));  
+    }
+    if (player === 2) { 
+      this.setState({
+        selected
+      }, () => this.updateSelectedPokemon(selected, this.state.selected.maxHP));  
     }
   }
 
   render() {
-    const { selected, } = this.state;
+    const { selected } = this.state;
     const { data, healthbar, fightStatus } = this.props;
     
     return (

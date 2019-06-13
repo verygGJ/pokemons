@@ -27,3 +27,90 @@ code {
   width: 100%;
   margin: 0 auto 30px;
 }
+
+.restart-button {
+  margin: 0 auto 50px;
+  display: block;
+  font-size: 20px;
+  width: 300px;
+  height: 55px;
+  font-weight: bold;
+  background: yellow;
+  color: #333;
+}
+
+
+.st0{fill:#ECD714;}
+.st1{fill:#E9B115;}
+.st2{fill:#FE0808; animation: st2 2.5s ease-out infinite; -webkit-animation: st2 2.5s ease-out infinite;}
+.st3{fill:#E60000;}
+.st4{fill:#FE1200;}
+.st5{fill:#4E4707;}
+.st6{fill:#180403;}
+.st7{fill:#6C6209;}
+.st8{fill:#010100;}
+.st9{fill:#0B0A01;}
+.st10{fill:#F8F8F8;}
+.st11{fill:#F7F7F7;}
+.st12{fill:#94190A;}
+.st13{fill:#7C150D;}
+.st14{fill:#791913;}
+.st15{fill:#39CBD9;}
+.preloader {
+  width: 50%;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+}
+
+.eye {
+  animation: eye 2s ease-out infinite;
+  -webkit-animation: eye 2s ease-out infinite;
+}
+
+.tail {
+  position: absolute;
+  width: 35%;
+  z-index: -10;
+  bottom: 18%;
+  right: 3%;
+  transform-origin: 0% 100%;
+  -webkit-transform-origin: 0% 100%;
+  animation: tail 2s linear infinite;
+  -webkit-animation: tail 2s linear infinite;
+}
+
+.circle {
+  position: absolute;
+  width: 100%;
+  z-index: -20;
+  top: -10%;;
+  left: -5%;
+}
+
+@keyframes eye {
+  0% {opacity: 1;}
+  5% {opacity: 0;}
+  10% {opacity: 1;}
+}
+@-webkit-keyframes eye {
+  0% {opacity: 1;}
+  5% {opacity: 0;}
+  10% {opacity: 1;}
+}
+
+@keyframes tail {
+  0% {transform: rotate(0deg);}
+  50% {transform: rotate(10deg);}
+}
+@-webkit-keyframes tail {
+  0% {transform: rotate(0deg);}
+  50% {transform: rotate(10deg);}
+}
+
+@keyframes st2 {
+  0% {fill: #FE0808;}
+  20% {fill: #FFFA3F;}
+} 

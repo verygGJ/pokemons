@@ -4,7 +4,14 @@ import React from 'react';
 import { Select } from 'antd';
 import 'antd/dist/antd.css';
 
-const Dropdown = ({ data, handleChange, fightStatus }) => {
+type Props = { 
+  data: [],
+  handleChange: Function,
+  fightStatus: boolean,
+}
+
+const Dropdown = (props: Props) => {
+  const { data, handleChange, fightStatus } = props;
   const { Option } = Select;
   return (
     <Select 
