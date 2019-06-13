@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react';
 import { connect } from "react-redux";
 import Dropdown from './Dropdown';
@@ -16,7 +18,9 @@ const CardWrapper = styled.div`
   flex-direction: column;
   justify-content: space-between;
   align-items: flex-start;
-  border: 1px solid #000;
+  border: 1px solid #ccc;
+  padding: 30px 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
 `
 
 type State = { 
@@ -52,14 +56,14 @@ class Card extends React.Component<State> {
   }
 
   render() {
-    const { selected } = this.state;
-    const { data } = this.props;
+    const { selected, } = this.state;
+    const { data, healthbar, fightStatus } = this.props;
     
     return (
       <React.Fragment>
         <CardWrapper>
-          <Dropdown data={data} handleChange={this.handleChange}/>
-          <CardInfo selected={selected} />
+          <Dropdown data={data} handleChange={this.handleChange} fightStatus={fightStatus}/>
+          <CardInfo selected={selected} healthbar={healthbar} />
         </CardWrapper>
       </React.Fragment>
     )

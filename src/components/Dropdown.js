@@ -1,15 +1,17 @@
+// @flow
+
 import React from 'react';
 import { Select } from 'antd';
 import 'antd/dist/antd.css';
 
-
-const Dropdown = ({ data, handleChange }) => {
+const Dropdown = ({ data, handleChange, fightStatus }) => {
   const { Option } = Select;
   return (
     <Select 
       placeholder="Select a pokemon"
       onChange={handleChange}
-      style={{ width: 200 }}
+      disabled={fightStatus}
+      className="custome-select"
     >
       {data.map((item) => {
         return (

@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react';
 import styled from 'styled-components';
 import '../styles.css';
@@ -69,15 +71,14 @@ const WinnerBlock = styled.div`
 
 
 class FightMessage extends React.Component {
-  
   render() {
-    const { fightMessageOne, allAttacks } = this.props;
+    const { winnerMessage, allAttacks } = this.props;
 
     return(
       <FightLog>
         {allAttacks.map((attack, index) => {
           const playerName = index%2 ? 'Player 2' : 'Player 1';
-          const block = attack.damage <= 0 ? 'ЗАБЛОЧЕНО' : `- ${attack.damage} HP!`;
+          const block = attack.newdmg <= 0 ? 'ЗАБЛОЧЕНО' : `- ${attack.newdmg} HP!`;
           return (
             <FightItem key={index} className={ index%2 ? 'reverse' : '' }>
               <FightItemLeft>
@@ -90,11 +91,10 @@ class FightMessage extends React.Component {
             </FightItem>
           ) 
         })}
-        <WinnerBlock>{fightMessageOne}</WinnerBlock>
+        <WinnerBlock>{winnerMessage}</WinnerBlock>
       </FightLog>
     )
   }
 }
-
 
 export default FightMessage;

@@ -2,7 +2,6 @@ const initialState = {
   allPokemons: [],
   playerPokemon: {},
   enemyPokemon: {},
-  fightLog: []
 }
 
 export function selectedPokemonsState(state = initialState, action) {
@@ -16,11 +15,6 @@ export function selectedPokemonsState(state = initialState, action) {
       return { 
         ...state,
         enemyPokemon: action.payload
-      }
-    case 'ADD_TO_FIGHT_LOG':
-      return { 
-        ...state,
-        fightLog: action.payload
       }
     default:
       return state;

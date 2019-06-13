@@ -8,6 +8,7 @@
     "apollo-cache-inmemory": "^1.6.2",
     "apollo-client": "^2.6.2",
     "apollo-link-http": "^1.5.14",
+    "flow-bin": "^0.101.0",
     "graphql": "^14.3.1",
     "graphql-tag": "^2.10.1",
     "lodash": "^4.17.11",
@@ -24,7 +25,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "flow": "flow"
   },
   "eslintConfig": {
     "extends": "react-app"

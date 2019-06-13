@@ -1,19 +1,16 @@
+// @flow
+
 import React from 'react';
 import { connect } from "react-redux";
 import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
 import _ from 'lodash';
-
-import { createFightLog } from './store/actions';
-
-
 import Card from './components/Card';
 import FightMessage from './components/FightMessage';
-
 import styled from 'styled-components'
-
 import { Button } from 'antd';
 import 'antd/dist/antd.css';
+
 
 const Wrapper = styled.div`
   max-width: 1100px;
@@ -21,7 +18,7 @@ const Wrapper = styled.div`
   margin: 50px auto;
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
 `
 
 const GET_POKEMONS = gql`
@@ -50,20 +47,18 @@ const GET_POKEMONS = gql`
 `;
 
 type Props = { 
-  playerPokemon: object,
-  enemyPokemon: object
+  playerPokemon: Object,
+  enemyPokemon: Object
  };
 
 type State = { 
   player: boolean,
   enemy: boolean,
-  playerAttacks: [],
   playerHP: number,
   enemyHP: number,
-  enemyAttacks: [],
-  fightMessageOne: String,
-  fightMessageTwo: String,
-  gameOver: boolean
+  winnerMessage: string,
+  gameOver: boolean,
+  fightStatus: boolean
  };
 
 class App extends React.Component<Props, State> {
@@ -72,10 +67,10 @@ class App extends React.Component<Props, State> {
     playerHP: 0,
     enemy: true,
     enemyHP: 0,
-    fightMessageOne: '',
-    fightMessageTwo: '',
+    winnerMessage: '',
     gameOver: false,
     allAttacks: [],
+    fightStatus: false,
   }
 
   updatePlayerHP = (hp) => {
@@ -90,68 +85,65 @@ class App extends React.Component<Props, State> {
     const { playerPokemon, enemyPokemon } = this.props;
     return playerPokemon.hasOwnProperty('id') && enemyPokemon.hasOwnProperty('id');
   }
-  
+
+  resistantAttackValidate = (randomeAttack, target) => {
+    let resistantAttack = target.resistant.some(item => randomeAttack.type.indexOf(item) >= 0)
+    let AttackDamage;
+    
+    if (resistantAttack) {
+      randomeAttack.damage = 0;
+      AttackDamage = randomeAttack.damage;
+    } else {
+      AttackDamage = randomeAttack.damage;
+    }
+    
+    return AttackDamage;
+  }
+
   playerPokemonAttacks = () => {
     const { allAttacks } = this.state;
     const { playerPokemon, enemyPokemon } = this.props;
     const { attacks, name } = playerPokemon;
-
     let pokemonAtacks = [];
     pokemonAtacks.push(...attacks.fast);
     pokemonAtacks.push(...attacks.special);
-    const randomeAttack = _.sample(pokemonAtacks);
+    let randomeAttack = _.sample(pokemonAtacks);
+    let playerAttackDamage = this.resistantAttackValidate(randomeAttack, enemyPokemon);
+    playerAttackDamage = playerAttackDamage * 10;
 
-
-    let resistantAttack = enemyPokemon.resistant.some(item => randomeAttack.type.indexOf(item) >= 0)
-    let playerAttackDamage;   
-    if (resistantAttack) {
-      let blockValue = Math.random() * 100;
-      if (blockValue < 25) {
-        randomeAttack.damage = 0;
-      }
-    }
-
-    playerAttackDamage = randomeAttack.damage;
+    randomeAttack.newdmg = playerAttackDamage;
     allAttacks.push(randomeAttack)
-
-
+    
     this.setState(prevState => {
       if (prevState.enemyHP - playerAttackDamage <= 0) {
         return {
           enemyHP: 0,
           gameOver: true,
-          fightMessageOne: `${name} WIN`
+          winnerMessage: `${name} WIN`
         }
       } else {
         return {
           enemyHP: prevState.enemyHP - playerAttackDamage,
+          fightStatus: true,
           allAttacks: allAttacks
         }
       }
     });
   };
-
+  
   enemyPokemonAttacks = () => {
     const { allAttacks } = this.state;
     const { playerPokemon, enemyPokemon } = this.props;
     const { attacks } = enemyPokemon;
-
     let pokemonAtacks = [];
     pokemonAtacks.push(...attacks.fast);
     pokemonAtacks.push(...attacks.special);
-    const randomeAttack = _.sample(pokemonAtacks);
-
-
-    let resistantAttack = playerPokemon.resistant.some(item => randomeAttack.type.indexOf(item) >= 0)
-    let enemyAttackDamage;   
-    if (resistantAttack) {
-      let blockValue = Math.random() * 100;
-      if (blockValue < 25) {
-        randomeAttack.damage = 0;
-      }
-    }
-
-    enemyAttackDamage = randomeAttack.damage;
+    
+    let randomeAttack = _.sample(pokemonAtacks);
+    let enemyAttackDamage = this.resistantAttackValidate(randomeAttack, playerPokemon);
+    enemyAttackDamage = enemyAttackDamage * 10;
+    
+    randomeAttack.newdmg = enemyAttackDamage;
     allAttacks.push(randomeAttack)
     
     this.setState(prevState => {
@@ -159,30 +151,43 @@ class App extends React.Component<Props, State> {
         return {
           playerHP: 0,
           gameOver: true,
-          fightMessageOne: `${enemyPokemon.name} WIN`
+          winnerMessage: `${enemyPokemon.name} WIN`
         }
       } else {
         return {
           playerHP: prevState.playerHP - enemyAttackDamage,
+          fightStatus: true,
           allAttacks: allAttacks
         }
       }
     });
   }
-
+  
   startFight = () => {
-    // const { playerHP, enemyHP } = this.state;
-    
-    this.playerPokemonAttacks();
-    this.enemyPokemonAttacks();
-    // setInterval(() => {
-    //   if (playerHP > 0 && enemyHP > 0 ) {
-    //     this.playerPokemonAttacks();
-    //     this.enemyPokemonAttacks();
-    //   } else {
-    //     this.setState({ gameOver: true });
-    //   }
-    // }, 1000);
+    const { enemyHP, playerHP } = this.state;
+    setTimeout(() => {
+      if (enemyHP > 0 && playerHP > 0  ) {
+        this.playerPokemonAttacks();
+        if (enemyHP > 0 && playerHP > 0) {
+          setTimeout(() => {
+            this.enemyPokemonAttacks();
+          }, 1000)
+        }
+        setTimeout(this.startFight(), 1000);
+      }
+    }, 2000);
+  }
+
+  restartFight = () => {
+    const { playerPokemon, enemyPokemon } = this.props;
+    this.setState({
+      fightStatus: false,
+      playerHP: playerPokemon.maxHP,
+      enemyHP: enemyPokemon.maxHP,
+      winnerMessage: '',
+      gameOver: false,
+      allAttacks: [],
+    })
   }
 
   render() {
@@ -191,8 +196,12 @@ class App extends React.Component<Props, State> {
       enemy, 
       enemyAttacks, 
       playerAttacks,
-      fightMessageOne,
-      allAttacks
+      winnerMessage,
+      allAttacks,
+      playerHP,
+      enemyHP,
+      fightStatus,
+      gameOver
     } = this.state;
 
     return (
@@ -204,24 +213,35 @@ class App extends React.Component<Props, State> {
           return (
             <React.Fragment>
               <Wrapper>
-                <Card data={pokemons} player={player} updatePlayerHP={this.updatePlayerHP} />
-                <Card data={pokemons} enemy={enemy} updateEnemyHP={this.updateEnemyHP} />
+                <Card 
+                  data={pokemons} 
+                  player={player} 
+                  updatePlayerHP={this.updatePlayerHP} 
+                  healthbar={playerHP} 
+                  fightStatus={fightStatus}
+                  />
+                <Button 
+                  disabled={!this.fightValidate() || fightStatus}
+                  onClick={this.startFight}
+                >
+                  { this.fightValidate() ? 'Fight' : 'Pick Pokemons' }
+                </Button>
+                <Card 
+                  data={pokemons} 
+                  enemy={enemy} 
+                  updateEnemyHP={this.updateEnemyHP} 
+                  healthbar={enemyHP} 
+                  fightStatus={fightStatus} 
+                />
               </Wrapper>
-              
-              <Button 
-                disabled={!this.fightValidate()}
-                onClick={this.startFight}
-              >
-                { this.fightValidate() ? 'Fight' : 'Pick Pokemons' }
-              </Button>
 
               <FightMessage 
                 playerAttacks={playerAttacks} 
                 enemyAttacks={enemyAttacks} 
                 allAttacks={allAttacks}
-                fightMessageOne={fightMessageOne}
+                winnerMessage={winnerMessage}
               />
-
+              { gameOver ? <Button onClick={this.restartFight} >Restart Fight</Button> : '' }
             </React.Fragment>
           );
         }}
@@ -230,7 +250,6 @@ class App extends React.Component<Props, State> {
   }
 }
 
-
 function mapStateToProps(state) {
   return {
     playerPokemon: state.selectedPokemonsState.playerPokemon,
@@ -238,12 +257,4 @@ function mapStateToProps(state) {
   }
 }
 
-function mapDispatchToProps(dispatch) {
-  return {
-    createFightLog: (log) => {
-      dispatch(createFightLog(log))
-    },
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(mapStateToProps)(App);

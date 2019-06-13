@@ -1,5 +1,8 @@
+// @flow
+
 import React from 'react';
-import styled from 'styled-components'
+import styled from 'styled-components';
+import Healthbar from './Healthbar';
 
 const CardInfoWrapper = styled.div`
   width: 100%;
@@ -18,17 +21,13 @@ const CardInfoName = styled.div`
   color: #333;
 `
 
-const CardInfoHP = styled.div`
-  color: red;
-`
-
-const CardInfo = ({ selected }) => (
+const CardInfo = ({ selected, healthbar }) => (
   <CardInfoWrapper>
     <CardInfoImage>
-      <img src={selected.image} width="90" height="90" alt={selected.name}/>
+      <img src={selected.image} width="150" height="150" alt={selected.name} />
     </CardInfoImage>
     <CardInfoName>{selected.name}</CardInfoName>
-    <CardInfoHP>{selected.maxHP}</CardInfoHP>
+    <Healthbar healthbar={healthbar} maxHP={selected.maxHP} />
   </CardInfoWrapper>
 )
 

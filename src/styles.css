@@ -22,3 +22,8 @@ code {
 .reverse {
   flex-direction: row-reverse;
 }
+
+.custome-select {
+  width: 100%;
+  margin: 0 auto 30px;
+}
