@@ -1,15 +1,11 @@
 // @flow
 
-import React from 'react';
+import React from "react";
 import { connect } from "react-redux";
-import Dropdown from './Dropdown';
-import CardInfo from './CardInfo';
-import styled from 'styled-components';
-
-import { 
-  selectPlayerPokemon,
-  selectEnemyPokemon,
-} from '../store/actions';
+import Dropdown from "./Dropdown";
+import CardInfo from "./CardInfo";
+import styled from "styled-components";
+import { selectPlayerPokemon, selectEnemyPokemon } from "../store/actions";
 
 const CardWrapper = styled.div`
   max-width: 400px;
@@ -22,7 +18,8 @@ const CardWrapper = styled.div`
   border: 1px solid #ccc;
   padding: 30px 20px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
-`
+`;
+
 type Props = {
   data: [],
   player: number,
@@ -33,7 +30,7 @@ type Props = {
   selectEnemyPokemon: Function
 }
 
-type State = { 
+type State = {
   pokemons: [],
   selected: Object
  };
@@ -41,49 +38,44 @@ type State = {
 class Card extends React.Component<Props, State> {
   state = {
     pokemons: this.props.data,
-    selected: {},
+    selected: {}
   }
 
   updateSelectedPokemon = (pokemon, selectedHP) => {
-    const { 
-      player,
-      selectPlayerPokemon, 
-      selectEnemyPokemon, 
-      updatePokemonHP
-    } = this.props;
+    const { player, updatePokemonHP } = this.props;
 
     if (player === 1) {
-      selectPlayerPokemon(pokemon)
-      updatePokemonHP(selectedHP)
+      this.props.selectPlayerPokemon(pokemon);
+      updatePokemonHP(selectedHP);
     }
     if (player === 2) {
-      selectEnemyPokemon(pokemon)
-      updatePokemonHP(selectedHP)
+      this.props.selectEnemyPokemon(pokemon);
+      updatePokemonHP(selectedHP);
     }
   }
 
-  handleChange = (value) => {
+  handleChange = value => {
     const { pokemons } = this.state;
     const { player } = this.props;
-    
+
     const selected = pokemons.find(pokemon => pokemon.id === value);
 
     if (player === 1) {
       this.setState({
         selected
-      }, () => this.updateSelectedPokemon(selected, this.state.selected.maxHP));  
+      }, () => this.updateSelectedPokemon(selected, this.state.selected.maxHP));
     }
-    if (player === 2) { 
+    if (player === 2) {
       this.setState({
         selected
-      }, () => this.updateSelectedPokemon(selected, this.state.selected.maxHP));  
+      }, () => this.updateSelectedPokemon(selected, this.state.selected.maxHP));
     }
   }
 
   render() {
     const { selected } = this.state;
     const { data, healthbar, fightStatus } = this.props;
-    
+
     return (
       <React.Fragment>
         <CardWrapper>
@@ -91,29 +83,25 @@ class Card extends React.Component<Props, State> {
           <CardInfo selected={selected} healthbar={healthbar} />
         </CardWrapper>
       </React.Fragment>
-    )
+    );
   }
 }
 
 
-function mapStateToProps(state) {
-  return {
-    playerPokemon: state.selectedPokemonsState.playerPokemon,
-    enemyPokemon: state.selectedPokemonsState.enemyPokemon,
-    enemyCurrentHP: state.selectedPokemonsState.enemyCurrentHP,
-    playerCurrentHP: state.selectedPokemonsState.playerCurrentHP
-  }
-}
+const mapStateToProps = state => ({
+  playerPokemon: state.selectedPokemonsState.playerPokemon,
+  enemyPokemon: state.selectedPokemonsState.enemyPokemon,
+  enemyCurrentHP: state.selectedPokemonsState.enemyCurrentHP,
+  playerCurrentHP: state.selectedPokemonsState.playerCurrentHP
+});
 
-function mapDispatchToProps(dispatch) {
-  return {
-    selectPlayerPokemon: (pokemon) => {
-      dispatch(selectPlayerPokemon(pokemon))
-    },
-    selectEnemyPokemon: (pokemon) => {
-      dispatch(selectEnemyPokemon(pokemon))
-    },
+const mapDispatchToProps = dispatch => ({
+  selectPlayerPokemon: pokemon => {
+    dispatch(selectPlayerPokemon(pokemon));
+  },
+  selectEnemyPokemon: pokemon => {
+    dispatch(selectEnemyPokemon(pokemon));
   }
-}
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Card);

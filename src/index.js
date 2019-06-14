@@ -1,18 +1,19 @@
 // @flow
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { ApolloProvider } from 'react-apollo';
-import { ApolloClient } from 'apollo-client';
-import { HttpLink } from 'apollo-link-http';
-import { InMemoryCache } from 'apollo-cache-inmemory';
-import { Provider } from 'react-redux';
-import { createStore } from 'redux';
-import rootReducer from './store/reducers';
-import App from './App';
+import React from "react";
+import ReactDOM from "react-dom";
+import { ApolloProvider } from "react-apollo";
+import { ApolloClient } from "apollo-client";
+import { HttpLink } from "apollo-link-http";
+import { InMemoryCache } from "apollo-cache-inmemory";
+import { Provider } from "react-redux";
+import { createStore } from "redux";
+import rootReducer from "./store/reducers";
+import App from "./App";
+
 
 const cache = new InMemoryCache();
-const API_POKEMON_URL = 'https://graphql-pokemon.now.sh';
+const API_POKEMON_URL = "https://graphql-pokemon.now.sh";
 
 const httpLink = new HttpLink({
   uri: API_POKEMON_URL
@@ -20,11 +21,11 @@ const httpLink = new HttpLink({
 
 const client = new ApolloClient({
   link: httpLink,
-  cache,
+  cache
 });
 
 const store = createStore(rootReducer);
-const root = document.getElementById('root')
+const root = document.getElementById("root");
 
 if (root !== null) {
   ReactDOM.render(
@@ -32,5 +33,6 @@ if (root !== null) {
       <ApolloProvider client={client}>
         <App />
       </ApolloProvider>
-    </Provider>, root);
+    </Provider>, root
+  );
 }

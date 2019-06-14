@@ -1,8 +1,9 @@
+/* eslint-disable no-confusing-arrow */
 // @flow
 
-import React from 'react';
-import styled from 'styled-components';
-import '../styles.css';
+import React from "react";
+import styled from "styled-components";
+import "../styles.css";
 
 const FightItem = styled.div`
   width: 100%;
@@ -11,7 +12,7 @@ const FightItem = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
-`
+`;
 
 const FightItemLeft = styled.div`
   display: flex;
@@ -24,26 +25,27 @@ const FightItemLeft = styled.div`
   justify-content: center;
   border: 1px solid #59e759;
   border-radius: 10px;
-`
+`;
 
 const FightItemArrow = styled.div`
   display: flex;
-`
+`;
+
 
 const FightItemRight = styled.div`
   max-width: 400px;
   width: 100%;
   height: 50px;
-  background: ${props => props.resist ? "yellow" : "pink"};
+  background: ${props => (props.resist ? "yellow" : "pink")};
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  border: 1px solid ${props => props.resist ? "#ceda2f" : "#f17087"};
+  border: 1px solid ${props => (props.resist ? "#ceda2f" : "#f17087")};
   border-radius: 10px;
-`
+`;
 
-type Props = { 
+type Props = {
   attack: Object,
   index: number,
   playerName: string,
@@ -53,17 +55,18 @@ type Props = {
 
 const AttackMessage = (props: Props) => {
   const { attack, index, playerName, attackIsResist, arrowDirection } = props;
+
   return (
-    <FightItem className={ index%2 ? 'reverse' : '' }>
+    <FightItem className={ index % 2 ? "reverse" : "" }>
       <FightItemLeft>
         {playerName} used {attack.name}
       </FightItemLeft>
       <FightItemArrow> {arrowDirection} </FightItemArrow>
-      <FightItemRight resist={attack.newdmg <= 0 ? attackIsResist : ''} >
+      <FightItemRight resist={attack.newdmg <= 0 ? attackIsResist : ""} >
         {attackIsResist}
       </FightItemRight>
     </FightItem>
-  )
-}
+  );
+};
 
 export default AttackMessage;

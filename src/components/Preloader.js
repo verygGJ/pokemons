@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react';
+import React from "react";
 
 const Preloader = () => (
   <div className="preloader">
@@ -87,7 +87,7 @@ const Preloader = () => (
       </g>
     </svg>
     <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xlinkHref="http://www.w3.org/1999/xlinkHref" x="0px" y="0px"
-    viewBox="0 0 75.5 115.7" className="tail">
+      viewBox="0 0 75.5 115.7" className="tail">
       <g>
         <path id="XMLID_7_" d="M75.5,38.6C62,43.7,48.2,48.2,34.4,52.3c-2.5,0.7-3,1.5-2.3,4.2c1.3,4.6,2.7,9.2,4.7,13.5
           c1.2,2.7,0.4,4.1-2,5c-2.9,1.1-5.8,2.4-8.9,3c-3.3,0.7-3.9,2.5-3.2,5.4c0.8,3.7,4,7.7,2.4,10.7c-1.6,2.9-6.1,4.1-9.4,6.1
@@ -124,10 +124,10 @@ const Preloader = () => (
       </g>
     </svg>
     <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xlinkHref="http://www.w3.org/1999/xlinkHref" x="0px" y="0px"
-    viewBox="0 0 185.8 186.3"  className="circle">
+      viewBox="0 0 185.8 186.3" className="circle">
       <circle className="st15" cx="92.8" cy="93.2" r="93"/>
     </svg>
   </div>
-)
+);
 
 export default Preloader;

@@ -1,42 +1,44 @@
 // @flow
 
-import React from 'react';
-import { Progress } from 'antd';
-import styled from 'styled-components';
+import React from "react";
+import { Progress } from "antd";
+import styled from "styled-components";
 
 const HealthbarItem = styled.div`
   width: 280px;
-`
+`;
 
 const HealthbarHP = styled.div`
   text-align: center;
   font-size: 18px;
   font-weight: bold;
-`
+`;
 
-type State = { 
+type State = {
   percent: number
 }
 
-type Props = { 
+type Props = {
   healthbar: number,
   maxHP: number
 }
 
 class Healthbar extends React.Component<Props, State> {
   state = {
-    percent: 100,
+    percent: 100
   }
 
   updeteHealthbar = () => {
     const { healthbar, maxHP } = this.props;
-    let result = (healthbar / maxHP) * 100;
-    let finalResult = parseFloat(result.toFixed(0))
+    const result = (healthbar / maxHP) * 100;
+    const finalResult = parseFloat(result.toFixed(0));
+
     this.setState({ percent: finalResult });
   }
 
   componentDidUpdate(previousProps: Props) : void {
     const { healthbar } = this.props;
+
     if (previousProps.healthbar !== healthbar) {
       this.updeteHealthbar();
     }
@@ -44,7 +46,8 @@ class Healthbar extends React.Component<Props, State> {
 
   render() {
     const { percent } = this.state;
-    const { healthbar } = this.props
+    const { healthbar } = this.props;
+
     return (
       <HealthbarItem>
         <HealthbarHP>
@@ -52,7 +55,7 @@ class Healthbar extends React.Component<Props, State> {
         </HealthbarHP>
         <Progress percent={percent} showInfo={false} />
       </HealthbarItem>
-    )
+    );
   }
 }
 

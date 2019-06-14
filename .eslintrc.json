@@ -1,0 +1,28 @@
+{
+  "parser": "babel-eslint",
+  "extends": [
+    "react-app",
+    "eslint",
+    "plugin:react/recommended"
+  ],
+  "env": { 
+    "es6": true
+  },
+  "parserOptions": {
+    "sourceType": "module"
+  },
+  "rules": {
+    "no-use-before-define": "off",
+    "node/no-unsupported-features/es-syntax": ["error", {
+      "version": ">=6.0.0",
+      "ignores": ["modules", "destructuring"]
+    }],
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "react/prop-types": "off",
+    "indent": ["error", 2],
+    "no-invalid-this": 0,
+    "require-jsdoc" : 0,
+    "func-style": [2, "expression", { "allowArrowFunctions": true }]
+  }
+}
+
