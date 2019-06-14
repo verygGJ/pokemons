@@ -1,5 +1,4 @@
 const initialState = {
-  allPokemons: [],
   playerPokemon: {},
   enemyPokemon: {}
 };
