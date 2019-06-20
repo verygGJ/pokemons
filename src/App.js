@@ -4,14 +4,15 @@ import React from "react";
 import { connect } from "react-redux";
 import gql from "graphql-tag";
 import { Query } from "react-apollo";
-import _ from "lodash";
+import { timer } from "rxjs";
+import { takeWhile, tap, delay } from "rxjs/operators";
 import styled from "styled-components";
+import { fightValidate, updatePokemonAtacks } from "./helper";
 import { Button } from "antd";
 import Card from "./components/Card";
 import Preloader from "./components/Preloader";
 import FightLog from "./components/FightLog";
 import "antd/dist/antd.css";
-
 
 const Wrapper = styled.div`
   max-width: 1100px;
@@ -50,7 +51,7 @@ const GET_POKEMONS = gql`
 type Props = {
   playerPokemon: Object,
   enemyPokemon: Object
- };
+};
 
 type State = {
   player: number,
@@ -83,46 +84,11 @@ class App extends React.Component<Props, State> {
     this.setState({ enemyHP: hp });
   }
 
-  fightValidate = () => {
-    const { playerPokemon, enemyPokemon } = this.props;
-
-    return _.isEmpty(playerPokemon, true) || _.isEmpty(enemyPokemon, true);
-  }
-
-  resistantAttackValidate = (randomeAttack, target) => {
-    const resistantAttack = target.resistant.some(item => randomeAttack.type.indexOf(item) >= 0);
-    let AttackDamage;
-
-    if (resistantAttack) {
-      randomeAttack.damage = 0;
-      AttackDamage = randomeAttack.damage;
-    } else {
-      AttackDamage = randomeAttack.damage;
-    }
-    return AttackDamage;
-  }
-
-  updatePokemonAtacks = (attackingPlayer, defenderPlayer) => {
-    const { allAttacks } = this.state;
-    const { attacks } = attackingPlayer;
-    const pokemonAtacks = [];
-
-    pokemonAtacks.push(...attacks.fast);
-    pokemonAtacks.push(...attacks.special);
-    const randomeAttack = _.sample(pokemonAtacks);
-    let playerAttackDamage = this.resistantAttackValidate(randomeAttack, defenderPlayer);
-
-    playerAttackDamage *= 10;
-    randomeAttack.newdmg = playerAttackDamage;
-    allAttacks.push(randomeAttack);
-    return playerAttackDamage;
-  }
-
   playerPokemonAttacks = () => {
     const { allAttacks } = this.state;
     const { playerPokemon, enemyPokemon } = this.props;
     const { name } = playerPokemon;
-    const playerAttackDamage = this.updatePokemonAtacks(playerPokemon, enemyPokemon);
+    const playerAttackDamage = updatePokemonAtacks(allAttacks, playerPokemon, enemyPokemon);
 
     this.setState(prevState => {
       if (prevState.enemyHP - playerAttackDamage <= 0) {
@@ -146,7 +112,7 @@ class App extends React.Component<Props, State> {
     const { allAttacks } = this.state;
     const { playerPokemon, enemyPokemon } = this.props;
     const { name } = enemyPokemon;
-    const enemyAttackDamage = this.updatePokemonAtacks(enemyPokemon, playerPokemon);
+    const enemyAttackDamage = updatePokemonAtacks(allAttacks, enemyPokemon, playerPokemon);
 
     this.setState(prevState => {
       if (prevState.playerHP - enemyAttackDamage <= 0) {
@@ -166,18 +132,16 @@ class App extends React.Component<Props, State> {
     });
   }
 
-  startFight = (e: Object): Object => {
-    setTimeout(() => {
-      if (!this.state.gameOver) {
-        this.playerPokemonAttacks();
-        if (!this.state.gameOver) {
-          setTimeout(() => {
-            this.enemyPokemonAttacks();
-          }, 1000);
-        }
-        setTimeout(this.startFight(e), 1000);
-      }
-    }, 2000);
+  startFight = () => {
+    const intervalAttacks = timer(0, 2000);
+
+    intervalAttacks.pipe(
+      takeWhile(() => !this.state.gameOver),
+      tap(() => this.playerPokemonAttacks()),
+      delay(1000),
+      takeWhile(() => !this.state.gameOver),
+      tap(() => this.enemyPokemonAttacks())
+    ).subscribe();
   }
 
   restartFight = () => {
@@ -225,10 +189,10 @@ class App extends React.Component<Props, State> {
                   fightStatus={fightStatus}
                 />
                 <Button
-                  disabled={this.fightValidate() || fightStatus}
+                  disabled={fightValidate(this.props) || fightStatus}
                   onClick={this.startFight}
                 >
-                  { this.fightValidate() ? "Pick Pokemons" : "Fight" }
+                  { fightValidate(this.props) ? "Pick Pokemons" : "Fight" }
                 </Button>
                 <Card
                   data={pokemons}

@@ -6,6 +6,7 @@ import Dropdown from "./Dropdown";
 import CardInfo from "./CardInfo";
 import styled from "styled-components";
 import { selectPlayerPokemon, selectEnemyPokemon } from "../store/actions";
+import { updateSelectedPokemon } from "../helper";
 
 const CardWrapper = styled.div`
   max-width: 400px;
@@ -41,19 +42,6 @@ class Card extends React.Component<Props, State> {
     selected: {}
   }
 
-  updateSelectedPokemon = (pokemon, selectedHP) => {
-    const { player, updatePokemonHP } = this.props;
-
-    if (player === 1) {
-      this.props.selectPlayerPokemon(pokemon);
-      updatePokemonHP(selectedHP);
-    }
-    if (player === 2) {
-      this.props.selectEnemyPokemon(pokemon);
-      updatePokemonHP(selectedHP);
-    }
-  }
-
   handleChange = value => {
     const { pokemons } = this.state;
     const { player } = this.props;
@@ -63,12 +51,12 @@ class Card extends React.Component<Props, State> {
     if (player === 1) {
       this.setState({
         selected
-      }, () => this.updateSelectedPokemon(selected, this.state.selected.maxHP));
+      }, () => updateSelectedPokemon(this.props, selected, this.state.selected.maxHP));
     }
     if (player === 2) {
       this.setState({
         selected
-      }, () => this.updateSelectedPokemon(selected, this.state.selected.maxHP));
+      }, () => updateSelectedPokemon(this.props, selected, this.state.selected.maxHP));
     }
   }
 
