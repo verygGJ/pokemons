@@ -13,7 +13,7 @@
     "flow-bin": "^0.101.0",
     "graphql": "^14.3.1",
     "graphql-tag": "^2.10.1",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.21",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-apollo": "^2.5.6",
